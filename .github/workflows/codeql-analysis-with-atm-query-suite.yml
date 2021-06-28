@@ -87,6 +87,9 @@ jobs:
           ls -lR ${cli_root}/lib-extra
           ls -lR ${cli_root}/ml-models
 
+          echo "Model properties:"
+          cat ${cli_root}/ml-models/*.qlmodel/model.properties
+          
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
         with:
