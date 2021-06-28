@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
 
 env:
-  BASE_URL: 'https://atmcodeqlpublicdata.blob.core.windows.net/atmpublic/query-suite/v1.0.0-rc1+368448f'
-  CLI_ADDITIONS_CHECKSUM: 'cd1225fa4a61c35b9dd51e3324df4facdb9633d0a86de7be636d1225ccf88713e04a1501bdc2f23b0313224396163eb0113185fdf59fcc35207cc72f1afb9bda'
-  QLPACK_CHECKSUM: 'd88295e6ffb20d64eb458f984ef2fb0b9ab6ef4dd3f2a5f5d778444c77cc919e402b72a97bd7fd201424be081c25f9e9795e796b84f7a0985ffb0ab45d385fe7'
+  BASE_URL: 'https://atmcodeqlpublicdata.blob.core.windows.net/atmpublic/query-suite/threshold1-v0.0.3+adea502'
+  CLI_ADDITIONS_CHECKSUM: '9263bddb6eb2448eda5abce3ebd3e00852f4f0a618a7ea0b247dd3f011a876fc26b0616513b921f3a3a8ab8860a877b3db3b695d6e74b4d9bed2ffa8f55ba211'
+  QLPACK_CHECKSUM: 'a1f3fee75cef271aedafce21eb5ae5884427b3e7988fbba37643143d2f677036f3f364467941adb41691f9c1bb0c569ba5bb48abfea4c114541adc11a0673565'
 
 jobs:
   CodeQL-Build:
