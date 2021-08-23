@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
 
 env:
-  BASE_URL: 'https://atmcodeqlpublicdata.blob.core.windows.net/atmpublic/query-suite/threshold1-v1.0.1+0160270'
-  CLI_ADDITIONS_CHECKSUM: 'dae60542c384268fa24e9354064247fa2d594bc5000bb7a0e5059678ff088b6900df82f765b4ae65fc05cab7e68e121457e7068c02c3f7706d18b4ee15635906'
-  MODEL_CHECKSUM: 'f0191c93957ccdfa27059c37ac08897f57e80e9660507dfbf40d826c13e78fd4'
-  QLPACK_CHECKSUM: '7d95bebac36cd9cdfbd058f290fe2ecc71e7acf9eaae5557b15a9665514870ecc2d59d365da5567024e6505efe517cf992c75307db33629d101ac4a94d709dc7'
+  BASE_URL: 'https://atmcodeqlpublicdata.blob.core.windows.net/atmpublic/query-suite/v1.0.2.test+fbcd4d6'
+  CLI_ADDITIONS_CHECKSUM: '79ba9830fc58b2a809057a13e2c264c82d8a50998ac499a3a531f281904b64a0d29a58d6c6db6862f7d97d16ea1861220a14620c0f9e981fe423d91fb1e95384'
+  MODEL_CHECKSUM: 'dfca9f673afbf58a0b0112693bceb28decbd1014706a71243273e80a770cb35b'
+  QLPACK_CHECKSUM: '0e5aaa30fc194bc33cf14f44e37e1c64ec2a45de1237e9cdf0e5a4df2a9aeeed533713f41a06ff5dbed11a5338e9888b43a84fe04a95f42b14f11f1969d73428'
 
 jobs:
   CodeQL-Build:
-    runs-on: ubuntu-latest-xl
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -30,24 +30,32 @@ jobs:
               "$(sha512sum -b qlpack.tar.gz | awk '{ print $1 }')"
             exit 1
           fi
+
           mkdir -p .github/codeql
           atm_qlpack_path=".github/codeql/codeql-javascript-atm"
           mkdir ${atm_qlpack_path}
           tar -xvzf qlpack.tar.gz -C ${atm_qlpack_path}
           rm qlpack.tar.gz
+
           ls -lR ${atm_qlpack_path}
+
           # Add ATM query pack to the CodeQL search path
           CODEQL_CONFIG_FILE="${RUNNER_TEMP}/codeql_config"
           echo "CODEQL_CONFIG_FILE=${CODEQL_CONFIG_FILE}" >> ${GITHUB_ENV}
           echo "--search-path ${atm_qlpack_path}" >> ${CODEQL_CONFIG_FILE}
+
           echo "ATM CodeQL CLI config file contents:"
           cat ${CODEQL_CONFIG_FILE}
+
           echo "name: \"ATM CodeQL config\"" > .github/codeql/codeql-config.yml
           echo "disable-default-queries: true" >> .github/codeql/codeql-config.yml
           echo "queries:" >> .github/codeql/codeql-config.yml
           echo "  - uses: ./${atm_qlpack_path}/codeql-suites/javascript-atm-code-scanning.qls" >> .github/codeql/codeql-config.yml
+
           echo "ATM Code Scanning config file contents:"
           cat .github/codeql/codeql-config.yml
+
+
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         id: codeql-init
@@ -64,6 +72,7 @@ jobs:
         run: |
           cli_root="$(dirname ${CODEQL_PATH})"
           echo "Using CodeQL CLI root at ${cli_root}"
+
           cli_additions_url="${BASE_URL}/codeql-atm-cli-additions.tar.gz"
           echo "Attempting to download ATM CLI additions from ${cli_additions_url}"
           azcopy10 cp "${cli_additions_url}" cli-additions.tar.gz
@@ -72,13 +81,16 @@ jobs:
               "$(sha512sum -b cli-additions.tar.gz | awk '{ print $1 }')"
             exit 1
           fi
+
           tar -xvzf cli-additions.tar.gz -C ${cli_root}
           rm cli-additions.tar.gz
+
           ls -lR ${cli_root}/lib-extra
           ls -lR ${cli_root}/ml-models
           
           echo "Model properties:"
           cat ${cli_root}/ml-models/*.qlmodel/model.properties
+
           echo "Checking that the model checksum matches the expected one defined in the 'env'" \
             "property of the workflow definition"
           if ! grep -q "checksum=${MODEL_CHECKSUM}" ${cli_root}/ml-models/*.qlmodel/model.properties; then
@@ -86,10 +98,13 @@ jobs:
               "$(grep 'checksum' ${cli_root}/ml-models/*.qlmodel/model.properties)"
             exit 1
           fi
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
         with:
+          ram: 512
           output: '.github/codeql/codeql-javascript-atm/results'
+          threads: 1
 
       - name: Upload SARIF results output
         uses: actions/upload-artifact@v2
