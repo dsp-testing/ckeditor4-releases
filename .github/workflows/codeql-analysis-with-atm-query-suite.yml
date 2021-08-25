@@ -103,7 +103,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
         with:
-          ram: 512
+          ram: 1024
           output: '.github/codeql/codeql-javascript-atm/results'
           threads: 1
 
