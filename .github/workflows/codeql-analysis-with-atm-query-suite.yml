@@ -40,12 +40,10 @@ jobs:
           ls -lR ${atm_qlpack_path}
 
           # Add ATM query pack to the CodeQL search path
+          # And control RAM management policy
           CODEQL_CONFIG_FILE="${RUNNER_TEMP}/codeql_config"
           echo "CODEQL_CONFIG_FILE=${CODEQL_CONFIG_FILE}" >> ${GITHUB_ENV}
-          echo "--search-path ${atm_qlpack_path}" >> ${CODEQL_CONFIG_FILE}
-
-          # Control RAM management policy
-          # echo "--off-heap-ram 4096" >> "${CODEQL_CONFIG_FILE}
+          echo "--search-path ${atm_qlpack_path} --off-heap-ram 400" >> ${CODEQL_CONFIG_FILE}
 
           echo "ATM CodeQL CLI config file contents:"
           cat ${CODEQL_CONFIG_FILE}
@@ -105,7 +103,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
         with:
-          ram: 5120
+          ram: 512
           output: '.github/codeql/codeql-javascript-atm/results'
           threads: 1
 
