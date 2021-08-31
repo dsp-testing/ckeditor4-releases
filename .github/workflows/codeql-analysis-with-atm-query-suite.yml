@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          log_location: '${{ github.workspace }}/log'
 
       - name: Install ATM query pack
         run: |
@@ -41,9 +43,10 @@ jobs:
 
           # Add ATM query pack to the CodeQL search path
           # And control RAM management policy
+          # And logfile location
           CODEQL_CONFIG_FILE="${RUNNER_TEMP}/codeql_config"
           echo "CODEQL_CONFIG_FILE=${CODEQL_CONFIG_FILE}" >> ${GITHUB_ENV}
-          echo "--search-path ${atm_qlpack_path} --off-heap-ram 4096" >> ${CODEQL_CONFIG_FILE}
+          echo "--search-path ${atm_qlpack_path} --off-heap-ram 4096 --logdir ${log_location}" >> ${CODEQL_CONFIG_FILE}
 
           echo "ATM CodeQL CLI config file contents:"
           cat ${CODEQL_CONFIG_FILE}
@@ -118,3 +121,9 @@ jobs:
         with:
           name: codeql-database
           path: '${{ github.workspace }}/codeql-database'
+
+      - name: Upload CodeQL log
+        uses: actions/upload-artifact@v2
+        with:
+          name: codeql-log
+          path: '${{ github.workspace }}/log'
