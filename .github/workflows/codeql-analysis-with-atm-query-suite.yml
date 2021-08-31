@@ -44,8 +44,7 @@ jobs:
           # And logfile location
           CODEQL_CONFIG_FILE="${RUNNER_TEMP}/codeql_config"
           echo "CODEQL_CONFIG_FILE=${CODEQL_CONFIG_FILE}" >> ${GITHUB_ENV}
-          log_location='${{ github.workspace }}/log'
-          echo "--search-path ${atm_qlpack_path} --off-heap-ram 4096 --logdir ${log_location}" >> ${CODEQL_CONFIG_FILE}
+          echo "--search-path ${atm_qlpack_path} --off-heap-ram 4096" >> ${CODEQL_CONFIG_FILE}
 
           echo "ATM CodeQL CLI config file contents:"
           cat ${CODEQL_CONFIG_FILE}
