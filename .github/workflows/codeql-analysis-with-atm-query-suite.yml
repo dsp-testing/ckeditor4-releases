@@ -103,27 +103,25 @@ jobs:
             exit 1
           fi
 
-#      - name: Perform CodeQL Analysis
-#        uses: github/codeql-action/analyze@v1
-#        with:
-#          ram: 4096
-#          output: '.github/codeql/codeql-javascript-atm/results'
-#          threads: 1
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+        with:
+          output: '.github/codeql/codeql-javascript-atm/results'
 
-#      - name: Upload SARIF results output
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: javascript-atm.sarif
-#          path: .github/codeql/codeql-javascript-atm/results/*.sarif
+      - name: Upload SARIF results output
+        uses: actions/upload-artifact@v2
+        with:
+          name: javascript-atm.sarif
+          path: .github/codeql/codeql-javascript-atm/results/*.sarif
       
-#      - name: Upload CodeQL database
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: codeql-database
-#          path: '${{ github.workspace }}/codeql-database'
+      - name: Upload CodeQL database
+        uses: actions/upload-artifact@v2
+        with:
+          name: codeql-database
+          path: '${{ github.workspace }}/codeql-database'
 
-#      - name: Upload CodeQL log
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: codeql-log
-#          path: '${{ github.workspace }}/log'
+      - name: Upload CodeQL log
+        uses: actions/upload-artifact@v2
+        with:
+          name: codeql-log
+          path: '${{ github.workspace }}/log'
